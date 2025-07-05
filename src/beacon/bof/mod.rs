@@ -27,6 +27,9 @@ use windows_sys::Win32::System::Memory::{
 };
 
 pub fn bof_loader(mut decrypted_cursor: Cursor<Vec<u8>>) {
+    unsafe {
+        OUTPUT.output.clear(); // 在开始时清空输出缓冲区
+    }
     let _cmd_len = beacon_read_i32(&mut decrypted_cursor).unwrap();
     let entry_point = beacon_read_i32(&mut decrypted_cursor).unwrap();
 

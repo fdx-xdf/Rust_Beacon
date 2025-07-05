@@ -82,7 +82,7 @@ const CALLBACK_OUTPUT_UTF8: u32 = 0x20;
 const CALLBACK_ERROR: u32 = 0x0d;
 
 /// List of internal function names.
-pub static INTERNAL_FUNCTION_NAMES: [&str; 29] = [
+pub static INTERNAL_FUNCTION_NAMES: [&str; 31] = [
     "LoadLibraryA",
     "FreeLibrary",
     "GetProcAddress",
@@ -102,6 +102,9 @@ pub static INTERNAL_FUNCTION_NAMES: [&str; 29] = [
     "BeaconFormatInt",
     "BeaconOutput",
     "BeaconPrintf",
+    "BeaconErrorD",
+    "BeaconErrorDD",
+    "BeaconErrorNA",
     "BeaconUseToken",
     "BeaconRevertToken",
     "BeaconIsAdmin",
@@ -111,7 +114,7 @@ pub static INTERNAL_FUNCTION_NAMES: [&str; 29] = [
     "BeaconSpawnTemporaryProcess",
     "BeaconCleanupProcess",
     "toWideChar",
-    "__C_specific_handler",
+
 ];
 
 /// Match the function name to the internal function pointer.
@@ -247,9 +250,9 @@ extern "C" fn beacon_data_parse(parser: *mut Datap, buffer: *mut c_char, size: c
     data_parser.length = size - 4;
     data_parser.size = size - 4;
 
-    unsafe {
-        data_parser.buffer = data_parser.buffer.add(4);
-    }
+    // unsafe {
+    //     data_parser.buffer = data_parser.buffer.add(4);
+    // }
 
     unsafe {
         *parser = data_parser;
@@ -349,7 +352,7 @@ extern "C" fn beacon_data_extract(parser: *mut Datap, size: *mut c_int) -> *mut 
     let mut length_holder = [0u8; 4];
     length_holder.clone_from_slice(&length_parts[0..4]);
 
-    let length: u32 = u32::from_ne_bytes(length_holder);
+    let length: u32 = u32::from_be_bytes(length_holder);
 
     data_parser.buffer = unsafe { data_parser.buffer.add(4) };
 
